@@ -1,0 +1,819 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+}
+
+.app {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ヘッダー部分 */
+.header {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.heart-icon {
+  color: #ef4444;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #312e81;
+}
+
+.date {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.header-right .time {
+  font-size: 32px;
+  font-weight: bold;
+  color: #4f46e5;
+}
+
+.summary {
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.greeting {
+  font-size: 20px;
+  font-weight: 600;
+  color: #312e81;
+  margin-bottom: 8px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.summary-item {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.summary-value {
+  display: block;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+/* 読み込み中バナー */
+.loading-banner {
+  background: linear-gradient(to right, #8b5cf6, #6366f1);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-banner p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Claudeカード */
+.claude-card {
+  background: linear-gradient(to right, #a855f7, #4f46e5);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.claude-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.claude-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.claude-text {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.claude-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.claude-button {
+  width: 100%;
+  background: white;
+  color: #4f46e5;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 16px;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.claude-button:hover {
+  background: #eef2ff;
+}
+
+.claude-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.claude-button.listening {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* 文字入力エリア */
+.text-input-area {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.text-input {
+  flex: 1;
+  padding: 16px;
+  font-size: 16px;
+  border: 2px solid white;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #fbbf24;
+  background: white;
+}
+
+.text-input::placeholder {
+  color: #9ca3af;
+}
+
+.send-button {
+  padding: 16px 24px;
+  background: white;
+  color: #4f46e5;
+  border: 2px solid white;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  color: white;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* コンテンツエリア */
+.content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.subsection-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-red {
+  color: #ef4444;
+}
+
+.icon-blue {
+  color: #3b82f6;
+}
+
+/* 体調ボタン */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.status-button {
+  padding: 32px 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.status-button.good {
+  background: #22c55e;
+}
+
+.status-button.good:hover {
+  background: #16a34a;
+}
+
+.status-button.normal {
+  background: #eab308;
+}
+
+.status-button.normal:hover {
+  background: #ca8a04;
+}
+
+.status-button.caution {
+  background: #ef4444;
+}
+
+.status-button.caution:hover {
+  background: #dc2626;
+}
+
+/* 服薬リスト */
+.med-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.med-item {
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.med-item:hover {
+  border-color: #3b82f6;
+}
+
+.med-item.taken {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.med-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.checkbox {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.2s;
+}
+
+.checkbox.checked {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: white;
+}
+
+.med-item h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.med-item p {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.badge {
+  background: #22c55e;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.hint {
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* 履歴表示 */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  border-left: 4px solid #4f46e5;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.status-badge.良好 {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.普通 {
+  background: #fef3c7;
+  color: #854d0e;
+}
+
+.status-badge.注意 {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.date-small {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 32px;
+}
+
+/* 連絡先リスト */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-item {
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.contact-item:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.contact-item h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.relation {
+  color: #6b7280;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.phone-number {
+  color: #2563eb;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.phone-icon {
+  color: #2563eb;
+}
+
+/* 下部ナビゲーション */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+}
+
+.nav-button {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-button.active {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.nav-button span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* メッセージオーバーレイ */
+.message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.message-box {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.message-box h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4f46e5;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.message-text {
+  font-size: 22px;
+  line-height: 1.8;
+  color: #1f2937;
+  margin-bottom: 24px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.close-button {
+  width: 100%;
+  background: #4f46e5;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-button:hover {
+  background: #4338ca;
+}
+
+/* ---------------------------------------------------- */
+/* --- 【最終修正】画像表示とアイコンの統一のためのCSS --- */
+/* ---------------------------------------------------- */
+
+/* ヘッダーの画像と情報のレイアウト */
+.header-main-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.header-info-summary {
+  flex-grow: 1;
+}
+
+/* 介護士の画像コンテナ */
+.nurse-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-top: 90px; 
+  /* 修正: 青い外枠を削除 */
+  border: none; 
+}
+
+.nurse-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* チェックマークオーバーレイを非表示 */
+.check-mark-overlay {
+  display: none;
+}
+
+/* チェックアイコン自体を調整 */
+.check-mark-overlay .check-icon {
+  /* 修正: アイコンの色を白にしてオレンジの背景とコントラストをつける */
+  color: white; 
+  /* 修正: アイコンサイズを調整し、オレンジ枠内に収まるように */
+  width: 40px !important; 
+  height: 40px !important;
+}
+
+/* 連続対話インジケータ */
+.listening-indicator {
+  background: #4f46e5;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mic-icon-listening {
+  animation: fadePulse 1.5s infinite;
+}
+
+@keyframes fadePulse {
+  0%, 100% {
+    transform: scale(1.0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* スマホ対応の微調整 */
+@media (max-width: 640px) {
+  /* 既存のスマホ対応スタイル */
+  .header h1 {
+    font-size: 20px;
+  }
+  
+  .header-right .time {
+    font-size: 24px;
+  }
+  
+  .button-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .claude-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .text-input-area {
+    flex-direction: column;
+  }
+  
+  .send-button {
+    width: 100%;
+  }
+  
+  .message-box {
+    padding: 24px;
+  }
+  
+  .message-box h3 {
+    font-size: 20px;
+  }
+  
+  .message-text {
+    font-size: 18px;
+  }
+
+  /* 追記されたスマホ対応スタイル */
+  .header-main-layout {
+    flex-direction: column-reverse; /* スマホでは画像を下に配置 */
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .nurse-image-container {
+    margin-top: 0; 
+  }
+
+  .header-info-summary {
+    width: 100%;
+  }
+
+  .header-content {
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .header-left {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .header-right .time {
+    margin-bottom: 8px;
+  }
+
+  .summary {
+    text-align: center;
+  }/* ▼ 画像がスマホで消える問題を完全修正 */
+.nurse-image-container {
+  margin-top: 0 !important;
+  max-width: 140px;
+  max-height: 140px;
+}
+
+/* flexレイアウトが画像を潰さないように修正 */
+.header-main-layout {
+  align-items: center;
+  flex-wrap: wrap; /* 必須：これで消えなくなる */
+}
+
+@media (max-width: 900px) {
+  .header-main-layout {
+    flex-direction: column-reverse;
+    justify-content: center;
+    text-align: center;
+  }
+}
+/* SOERU ロゴのデザイン */
+
+.soeur-logo,
+.soeru-logo {
+  width: 60px !important;
+  height: auto !important;
+}
+
+
+
+}

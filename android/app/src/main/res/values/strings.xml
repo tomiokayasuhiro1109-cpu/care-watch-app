@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">介護見守りアプリ</string>
+    <string name="title_activity_main">介護見守りアプリ</string>
+    <string name="package_name">com.leefr.carewatchapp</string>
+    <string name="custom_url_scheme">com.leefr.carewatchapp</string>
+</resources>
