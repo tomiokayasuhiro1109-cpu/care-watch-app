@@ -40,7 +40,8 @@ const [medicationHistory, setMedicationHistory] = useState([]);
 const [registrationStep, setRegistrationStep] = useState('select'); // 'select', 'main', 'support'
 const [registrationName, setRegistrationName] = useState('');
 const [inviteCode, setInviteCode] = useState('');
-
+const [showInviteHistory, setShowInviteHistory] = useState(false);
+const [invitedUsers, setInvitedUsers] = useState([]);
 const [selectedCharacter, setSelectedCharacter] = useState('woman30'); 
  
        // ✅ 今日の利用回数を取得
@@ -181,6 +182,28 @@ const fetchParentMedications = async (parentId) => {
       setUsers(data || []);
     }
   }, []);
+
+  // ✅ 招待したユーザー一覧を取得
+const fetchInvitedUsers = async () => {
+  if (!currentUser || !currentUser.invite_code) {
+    console.log('招待コードがありません');
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('name, created_at, role')
+    .eq('invited_by', currentUser.invite_code)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('招待履歴取得エラー:', error);
+    setInvitedUsers([]);
+  } else {
+    console.log('招待したユーザー:', data);
+    setInvitedUsers(data || []);
+  }
+};
 // ✅ ログイン処理
 const handleLogin = async (userId) => {
   const { data, error } = await supabase
@@ -272,7 +295,8 @@ const registerSupportUser = async () => {
         name: registrationName,
         role: 'child',
         plan: 'basic',
-        linked_user_id: parentUser.id
+        linked_user_id: parentUser.id,
+        invited_by: parentUser.invite_code
       }
     ])
     .select()
@@ -1114,6 +1138,57 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
     <div className="app">
       {showMessage && (
         <div className="message-overlay" onClick={() => setShowMessage(false)}>
+          {/* ✅ 招待履歴モーダル */}
+{showInviteHistory && (
+  <div className="message-overlay" onClick={() => setShowInviteHistory(false)}>
+    <div className="message-box" onClick={(e) => e.stopPropagation()}>
+      <h3>招待履歴</h3>
+      {invitedUsers.length > 0 ? (
+        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          {invitedUsers.map((user, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '12px',
+                borderBottom: '1px solid #e2e8f0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                  {user.name}
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  登録日: {new Date(user.created_at).toLocaleDateString('ja-JP')}
+                </div>
+              </div>
+              <span
+                style={{
+                  padding: '4px 8px',
+                  background: '#f0fdf4',
+                  color: '#16a34a',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                サポーター
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p style={{ textAlign: 'center', color: '#64748b', padding: '20px' }}>
+          まだ誰も招待していません
+        </p>
+      )}
+      <button className="close-button" onClick={() => setShowInviteHistory(false)}>
+        閉じる
+      </button>
+    </div>
+  </div>
+)}
           <div className="message-box" onClick={(e) => e.stopPropagation()}>
             <h3>Claudeからのメッセージ</h3>
             <p className="message-text">{claudeMessage}</p>
@@ -1152,29 +1227,52 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
         </button>
       </div>
       
-      {/* ✅ 招待コード表示（メインユーザーのみ） */}
-      {currentUser.role === 'parent' && currentUser.invite_code && (
-        <div style={{
-          background: '#eff6ff',
-          border: '2px solid #3b82f6',
-          borderRadius: '8px',
-          padding: '12px',
-          fontSize: '14px',
-          color: '#1e40af',
-          textAlign: 'center'
-        }}>
-          <span style={{ fontWeight: 'normal' }}>あなたの招待コードは </span>
-          <span style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold',
-            letterSpacing: '4px',
-            margin: '0 8px'
-          }}>
-            {currentUser.invite_code}
-          </span>
-          <span style={{ fontWeight: 'normal' }}> です</span>
-        </div>
-      )}
+   {/* ✅ 招待コード表示（メインユーザーのみ） */}
+{currentUser.role === 'parent' && currentUser.invite_code && (
+  <div style={{
+    background: '#eff6ff',
+    border: '2px solid #3b82f6',
+    borderRadius: '8px',
+    padding: '12px',
+    fontSize: '14px',
+    color: '#1e40af',
+    textAlign: 'center'
+  }}>
+    <span style={{ fontWeight: 'normal' }}>あなたの招待コードは </span>
+    <span style={{ 
+      fontSize: '24px', 
+      fontWeight: 'bold',
+      letterSpacing: '4px',
+      margin: '0 8px'
+    }}>
+      {currentUser.invite_code}
+    </span>
+    <span style={{ fontWeight: 'normal' }}> です</span>
+  </div>
+)}
+
+{/* ✅ 招待履歴表示ボタン（メインユーザーのみ） */}
+{currentUser.role === 'parent' && (
+  <div style={{ marginTop: '12px', textAlign: 'center' }}>
+    <button
+      onClick={() => {
+        fetchInvitedUsers();
+        setShowInviteHistory(true);
+      }}
+      style={{
+        padding: '8px 16px',
+        background: '#10b981',
+        color: 'white',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '14px'
+      }}
+    >
+      招待履歴を見る
+    </button>
+  </div>
+)}
     </div>
   )}
         {/* ヘッダー部分 */}
