@@ -40,6 +40,7 @@ const [medicationHistory, setMedicationHistory] = useState([]);
 const [registrationStep, setRegistrationStep] = useState('select'); // 'select', 'main', 'support'
 const [registrationName, setRegistrationName] = useState('');
 const [inviteCode, setInviteCode] = useState('');
+const [showPlanChange, setShowPlanChange] = useState(false);
 const [showInviteHistory, setShowInviteHistory] = useState(false);
 const [invitedUsers, setInvitedUsers] = useState([]);
 const [selectedCharacter, setSelectedCharacter] = useState('woman30'); 
@@ -202,6 +203,30 @@ const fetchInvitedUsers = async () => {
   } else {
     console.log('招待したユーザー:', data);
     setInvitedUsers(data || []);
+  }
+};
+// ✅ プラン変更
+const changePlan = async (newPlan) => {
+  if (!currentUser) {
+    alert('ユーザーが設定されていません');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('users')
+    .update({ plan: newPlan })
+    .eq('id', currentUser.id);
+
+  if (error) {
+    console.error('プラン変更エラー:', error);
+    alert('プラン変更に失敗しました: ' + error.message);
+  } else {
+    console.log('プラン変更成功:', newPlan);
+    alert(`プランを${newPlan === 'free' ? '無料' : 'Basic'}プランに変更しました`);
+    
+    // currentUserを更新
+    setCurrentUser({ ...currentUser, plan: newPlan });
+    setShowPlanChange(false);
   }
 };
 // ✅ ログイン処理
@@ -1199,6 +1224,78 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
         </div>
       </div>
     )}
+    {/* ✅ プラン変更モーダル */}
+{showPlanChange && (
+  <div className="message-overlay" onClick={() => setShowPlanChange(false)}>
+    <div className="message-box" onClick={(e) => e.stopPropagation()}>
+      <h3>プラン変更</h3>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <p style={{ fontSize: '14px', color: '#64748b' }}>
+          現在のプラン: <span style={{ fontWeight: 'bold', color: '#1e293b' }}>
+            {currentUser.plan === 'free' ? '無料プラン' : 'Basicプラン'}
+          </span>
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* 無料プラン */}
+        <button
+          onClick={() => changePlan('free')}
+          disabled={currentUser.plan === 'free'}
+          style={{
+            padding: '16px',
+            background: currentUser.plan === 'free' ? '#e2e8f0' : '#f8fafc',
+            border: currentUser.plan === 'free' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+            borderRadius: '8px',
+            cursor: currentUser.plan === 'free' ? 'not-allowed' : 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>
+            無料プラン
+          </div>
+          <div style={{ fontSize: '14px', color: '#64748b' }}>
+            • 1日3回まで利用可能<br />
+            • 看護師風の話し方のみ<br />
+            • ブラウザ音声
+          </div>
+        </button>
+
+        {/* Basicプラン */}
+        <button
+          onClick={() => changePlan('basic')}
+          disabled={currentUser.plan === 'basic'}
+          style={{
+            padding: '16px',
+            background: currentUser.plan === 'basic' ? '#e2e8f0' : '#f8fafc',
+            border: currentUser.plan === 'basic' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+            borderRadius: '8px',
+            cursor: currentUser.plan === 'basic' ? 'not-allowed' : 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>
+            Basicプラン
+          </div>
+          <div style={{ fontSize: '14px', color: '#64748b' }}>
+            • 1日10回まで利用可能<br />
+            • 5種類の話し方から選択<br />
+            • 高品質OpenAI音声
+          </div>
+        </button>
+      </div>
+
+      <button 
+        className="close-button" 
+        onClick={() => setShowPlanChange(false)}
+        style={{ marginTop: '16px' }}
+      >
+        閉じる
+      </button>
+    </div>
+  </div>
+)}
       <div className="container">
      {currentUser && (
     <div style={{ marginBottom: 16 }}>
@@ -1270,6 +1367,26 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
       }}
     >
       招待履歴を見る
+    </button>
+  </div>
+  
+)}
+{/* ✅ プラン変更ボタン（メインユーザーのみ） */}
+{currentUser.role === 'parent' && (
+  <div style={{ marginTop: '12px', textAlign: 'center' }}>
+    <button
+      onClick={() => setShowPlanChange(true)}
+      style={{
+        padding: '8px 16px',
+        background: '#f59e0b',
+        color: 'white',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '14px'
+      }}
+    >
+      プランを変更
     </button>
   </div>
 )}
