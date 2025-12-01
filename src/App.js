@@ -1138,57 +1138,7 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
     <div className="app">
       {showMessage && (
         <div className="message-overlay" onClick={() => setShowMessage(false)}>
-          {/* ✅ 招待履歴モーダル */}
-{showInviteHistory && (
-  <div className="message-overlay" onClick={() => setShowInviteHistory(false)}>
-    <div className="message-box" onClick={(e) => e.stopPropagation()}>
-      <h3>招待履歴</h3>
-      {invitedUsers.length > 0 ? (
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-          {invitedUsers.map((user, index) => (
-            <div
-              key={index}
-              style={{
-                padding: '12px',
-                borderBottom: '1px solid #e2e8f0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                  {user.name}
-                </div>
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  登録日: {new Date(user.created_at).toLocaleDateString('ja-JP')}
-                </div>
-              </div>
-              <span
-                style={{
-                  padding: '4px 8px',
-                  background: '#f0fdf4',
-                  color: '#16a34a',
-                  borderRadius: '4px',
-                  fontSize: '12px'
-                }}
-              >
-                サポーター
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p style={{ textAlign: 'center', color: '#64748b', padding: '20px' }}>
-          まだ誰も招待していません
-        </p>
-      )}
-      <button className="close-button" onClick={() => setShowInviteHistory(false)}>
-        閉じる
-      </button>
-    </div>
-  </div>
-)}
+          
           <div className="message-box" onClick={(e) => e.stopPropagation()}>
             <h3>Claudeからのメッセージ</h3>
             <p className="message-text">{claudeMessage}</p>
@@ -1198,7 +1148,57 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
           </div>
         </div>
       )}
-      
+          {/* ✅ 招待履歴モーダル */}
+    {showInviteHistory && (
+      <div className="message-overlay" onClick={() => setShowInviteHistory(false)}>
+        <div className="message-box" onClick={(e) => e.stopPropagation()}>
+          <h3>招待履歴</h3>
+          {invitedUsers.length > 0 ? (
+            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {invitedUsers.map((user, index) => (
+                <div
+                  key={index}
+                  style={{
+                    padding: '12px',
+                    borderBottom: '1px solid #e2e8f0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                      {user.name}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#64748b' }}>
+                      登録日: {new Date(user.created_at).toLocaleDateString('ja-JP')}
+                    </div>
+                  </div>
+                  <span
+                    style={{
+                      padding: '4px 8px',
+                      background: '#f0fdf4',
+                      color: '#16a34a',
+                      borderRadius: '4px',
+                      fontSize: '12px'
+                    }}
+                  >
+                    サポーター
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ textAlign: 'center', color: '#64748b', padding: '20px' }}>
+              まだ誰も招待していません
+            </p>
+          )}
+          <button className="close-button" onClick={() => setShowInviteHistory(false)}>
+            閉じる
+          </button>
+        </div>
+      </div>
+    )}
       <div className="container">
      {currentUser && (
     <div style={{ marginBottom: 16 }}>
