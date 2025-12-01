@@ -40,7 +40,7 @@ const [medicationHistory, setMedicationHistory] = useState([]);
 const [registrationStep, setRegistrationStep] = useState('select'); // 'select', 'main', 'support'
 const [registrationName, setRegistrationName] = useState('');
 const [inviteCode, setInviteCode] = useState('');
-const [generatedInviteCode, setGeneratedInviteCode] = useState('');
+
 const [selectedCharacter, setSelectedCharacter] = useState('woman30'); 
  
        // ✅ 今日の利用回数を取得
@@ -130,7 +130,7 @@ const fetchParentSafetyCheck = async (parentId) => {
   }
 };
 // ---------- ✅【ここに追加】最新の体調を取得 ----------
-  const fetchLatestSafetyCheck = async () => {
+  const fetchLatestSafetyCheck = useCallback(async () => {
     if (!currentUser) return;
 
     const { data, error } = await supabase
@@ -150,7 +150,7 @@ const fetchParentSafetyCheck = async (parentId) => {
         date: new Date(data.created_at).toLocaleString('ja-JP'),
       }]);
     }
-  };
+  }, [currentUser]);
 // ✅ 親の今日の服薬記録を取得
 const fetchParentMedications = async (parentId) => {
   const today = new Date();
@@ -228,9 +228,10 @@ const registerMainUser = async () => {
   if (error) {
     console.error('登録エラー:', error);
     alert('登録に失敗しました: ' + error.message);
+
+
   } else {
     console.log('登録成功:', data);
-    setGeneratedInviteCode(code);
     alert(`登録完了！招待コード: ${code}\nこのコードを見守る方に伝えてください。`);
     setCurrentUser(data);
     setIsLoggedIn(true);
@@ -318,7 +319,7 @@ const saveSafetyCheckToDB = async (status) => {
     return;
   }
 
-  const { data, error } = await supabase
+ const { error } = await supabase
     .from('safety_checks')
     .insert([
       {
@@ -342,7 +343,7 @@ const saveMedicationToDB = async (medicationName) => {
     return;
   }
 
-  const { data, error } = await supabase
+ const { error } = await supabase
     .from('medication_logs')
     .insert([
       {
@@ -703,7 +704,7 @@ const fetchMedicationHistory = async (userId) => {
      
       }
     }
-  }, [currentUser]);
+  }, [currentUser, fetchLatestSafetyCheck]);
   
   // 挨拶メッセージ
   const getGreeting = () => {
@@ -804,7 +805,7 @@ const fetchMedicationHistory = async (userId) => {
     }
     
     const randomInitialMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
-   speak(randomInitialMessage, false, false);
+   speak(randomInitialMessage, null, false);
 
 
     
