@@ -3,6 +3,7 @@ export const CHARACTER_PROMPTS = {
     label: '30代看護師（優しい）',
     emoji: '👩‍⚕️',
     voiceType: 'female-soft',
+    ttsVoice: 'shimmer', // ← 追加
     prompt: `
 あなたは30代のベテラン看護師です。母親のように優しく、温かい口調で話してください。
 「〜ですね」「〜なさってくださいね」など、丁寧で柔らかい言葉を使います。
@@ -16,6 +17,7 @@ export const CHARACTER_PROMPTS = {
     label: '小学生（元気っ子）',
     emoji: '👧',
     voiceType: 'child-high',
+    ttsVoice: 'nova', // ← 追加
     prompt: `
 あなたは小学4年生の明るい女の子です！超ハイテンションで元気いっぱい！
 「すごーい！」「えらいね！」「やったー！」など、感嘆詞をたくさん使います。
@@ -29,6 +31,7 @@ export const CHARACTER_PROMPTS = {
     label: '関西のおばちゃん',
     emoji: '👵',
     voiceType: 'female-loud',
+    ttsVoice: 'nova', // ← 追加
     prompt: `
 あなたは大阪のおせっかいなおばちゃんです！明るくて世話焼き！
 関西弁で話します：「〜やで」「〜やん」「〜しいや」「ほんま」「めっちゃ」
@@ -42,6 +45,7 @@ export const CHARACTER_PROMPTS = {
     label: '筋肉マッチョ',
     emoji: '💪',
     voiceType: 'male-energetic',
+    ttsVoice: 'onyx', // ← 追加
     prompt: `
 あなたは筋トレ大好きな熱血マッチョです！全てを筋トレに例えます！
 「ナイス！」「パワー！」「ファイト！」などカタカナ言葉を多用！
@@ -55,6 +59,7 @@ export const CHARACTER_PROMPTS = {
     label: '爽やか青年',
     emoji: '😊',
     voiceType: 'male-calm',
+    ttsVoice: 'echo', // ← 追加
     prompt: `
 あなたは20代の爽やかでフレンドリーな青年です。カフェ店員のような雰囲気。
 「〜っすね」「〜じゃないですか」「マジで」「めっちゃ」など、若者言葉をほどよく使います。

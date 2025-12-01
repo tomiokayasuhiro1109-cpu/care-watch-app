@@ -42,11 +42,11 @@ exports.handler = async (event) => {
 
     // キャラクター別の音声設定
     const voiceMap = {
-      student: 'nova',      // 明るい・高め
-      woman30: 'alloy',     // 落ち着いた女性
-      auntie: 'shimmer',    // 元気な女性
-      muscle: 'onyx',       // 力強い男性
-      handsome: 'echo',     // 爽やかな男性
+      woman30: 'shimmer',   // 柔らかい女性（看護師）
+  girl10: 'nova',       // 明るい女性（小学生）
+  auntie: 'nova',       // 明るい女性（おばちゃん）
+  muscle: 'onyx',       // 低音男性（マッチョ）
+  handsome: 'echo',     // 男性（爽やか青年）
     };
 
     const selectedVoice = voiceMap[character] || 'alloy';
