@@ -42,10 +42,58 @@ const [registrationName, setRegistrationName] = useState('');
 const [inviteCode, setInviteCode] = useState('');
 const [generatedInviteCode, setGeneratedInviteCode] = useState('');
 const [selectedCharacter, setSelectedCharacter] = useState('woman30'); 
+ 
+       // ✅ 今日の利用回数を取得
+const getTodayUsageCount = async () => {
+  if (!currentUser) return 0;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-// userPlanはcurrentUser.planから取得するので不要
-// const [userPlan, setUserPlan] = useState('basic'); // 削除
+  const { data, error } = await supabase
+    .from('usage_logs')
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .gte('used_at', today.toISOString());
+
+  if (error) {
+    console.error('利用回数取得エラー:', error);
+    return 0;
+  }
+
+  return data?.length || 0;
+};
+
+// ✅ 利用記録
+const logUsage = async () => {
+  if (!currentUser) return;
+
+  const { error } = await supabase
+    .from('usage_logs')
+    .insert([{ user_id: currentUser.id }]);
+
+  if (error) {
+    console.error('利用記録エラー:', error);
+  }
+};
+
+// ✅ 利用制限チェック
+const checkUsageLimit = async () => {
+  const count = await getTodayUsageCount();
+  const limit = currentUser?.plan === 'free' ? 3 : 10;
+
+  if (count >= limit) {
+    alert(
+      `本日の利用回数上限（${limit}回）に達しました。\n` +
+      (currentUser?.plan === 'free'
+        ? 'Basicプランにすると1日10回まで利用できます。'
+        : '')
+    );
+    return false;
+  }
+  return true;
+};
+
 
 
 
@@ -652,61 +700,7 @@ const fetchMedicationHistory = async (userId) => {
         fetchMedicationHistory(currentUser.linked_user_id).then(history => {
           setMedicationHistory(history);
         });
-      } else {
-        console.log('親データ取得条件を満たしていません');
-        // ✅ 今日の利用回数を取得
-const getTodayUsageCount = async () => {
-  if (!currentUser) return 0;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const { data, error } = await supabase
-    .from('usage_logs')
-    .select('id')
-    .eq('user_id', currentUser.id)
-    .gte('used_at', today.toISOString());
-
-  if (error) {
-    console.error('利用回数取得エラー:', error);
-    return 0;
-  }
-
-  return data?.length || 0;
-};
-
-// ✅ 利用回数を記録
-const logUsage = async () => {
-  if (!currentUser) return;
-
-  const { error } = await supabase
-    .from('usage_logs')
-    .insert([{ user_id: currentUser.id }]);
-
-  if (error) {
-    console.error('利用記録エラー:', error);
-  }
-};
-
-// ✅ 利用可能かチェック
-const checkUsageLimit = async () => {
-  const count = await getTodayUsageCount();
-  const limit = currentUser?.plan === 'free' ? 3 : 10;
-
-  if (count >= limit) {
-    alert(`本日の利用回数上限（${limit}回）に達しました。${currentUser?.plan === 'free' ? '\nBasicプランにアップグレードすると1日10回まで利用できます。' : ''}`);
-    return false;
-  }
-
-  return true;
-};
-        // ✅ 親の場合は自分の履歴を取得
-        fetchSafetyCheckHistory(currentUser.id).then(history => {
-          setSafetyCheckHistory(history);
-        });
-        fetchMedicationHistory(currentUser.id).then(history => {
-          setMedicationHistory(history);
-        });
+     
       }
     }
   }, [currentUser]);
@@ -810,7 +804,8 @@ const checkUsageLimit = async () => {
     }
     
     const randomInitialMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
-    speak(randomInitialMessage, false, selectedVoiceType);
+   speak(randomInitialMessage, false, false);
+
 
     
     const weather = await getWeather();
