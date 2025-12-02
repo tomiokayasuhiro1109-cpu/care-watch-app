@@ -853,9 +853,17 @@ const fetchMedicationHistory = async (userId) => {
       initialVoiceMessages = ['体調が良くないようですね。心配です。記録しました。少々お待ちください。'];
     }
     
-    const randomInitialMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
-   speak(randomInitialMessage, null, false);
+    
+   const randomInitialMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
 
+// ✅ ブラウザ音声で即座に再生
+if ('speechSynthesis' in window) {
+  const utterance = new SpeechSynthesisUtterance(randomInitialMessage);
+  utterance.lang = 'ja-JP';
+  utterance.rate = 1.05;
+  utterance.pitch = 1.4;
+  window.speechSynthesis.speak(utterance);
+}
 
     
     const weather = await getWeather();
@@ -865,18 +873,17 @@ const fetchMedicationHistory = async (userId) => {
     const characterPrompt = CHARACTER_PROMPTS[selectedCharacter];
     
     // ✅ キャラクターを考慮したメッセージ
-    const claudeMessage = `
+   const claudeMessage = `
 ${characterPrompt}
 
-${greeting}。今日(${dateStr})の体調は「${status}」です。
-今日の佐世保市の天気は${weather ? weather.description : '情報なし'}、気温は${weather ? weather.temp + '度' : '情報なし'}です。
+${greeting}。今日の体調は「${status}」です。
+天気は${weather ? weather.description : '情報なし'}、気温は${weather ? weather.temp + '度' : '情報なし'}です。
 
-${status === '良好' ? '元気で素晴らしいです。今日の記念日や佐世保の話題、天気に触れて話してください。' : ''}
-${status === '普通' ? '無理せず過ごしましょう。今日の記念日や励ましの言葉、天気に触れて話してください。' : ''}
-${status === '注意' ? '体調が良くないようですね。体調管理のアドバイスと心配する優しい言葉、天気に触れて話してください。' : ''}
+${status === '良好' ? '元気ですね。今日も良い一日になりますように。' : ''}
+${status === '普通' ? '無理せず過ごしてくださいね。' : ''}
+${status === '注意' ? '体調が良くないようですね。無理しないでください。' : ''}
 
-180文字以内で自然な会話調で答えてください。
-最後に「他に何かお聞きになりたいことはありますか?」という一文で終わってください。
+100文字以内で自然な会話調で答えてください。
 `;
     
    const result = await callClaudeWithVoice(claudeMessage);
@@ -903,13 +910,20 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
     const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
     
     const initialVoiceMessages = [`${med.name}を記録しました。えらいですね。少々お待ちください。`];
-    const randomMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
-    speak(randomMessage, false); 
+const randomMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
+
+// ✅ ブラウザ音声で即座に再生
+if ('speechSynthesis' in window) {
+  const utterance = new SpeechSynthesisUtterance(randomMessage);
+  utterance.lang = 'ja-JP';
+  utterance.rate = 1.05;
+  utterance.pitch = 1.4;
+  window.speechSynthesis.speak(utterance);
+}
     
     const weather = await getWeather();
     
-    const message = `${med.name}を飲みました。今日は${dateStr}です。今日の佐世保市の天気は${weather ? weather.description : '情報なし'}、気温は${weather ? weather.temp + '度' : '情報なし'}です。褒めの言葉、今日の記念日、天気に触れて話してください。最後に「他に何かお聞きになりたいことはありますか?」という一文で終わってください。優しく話しかけてください。`;
-    
+    const message = `${med.name}を飲みました。天気は${weather ? weather.description : '情報なし'}です。100文字以内で褒めてください。`;
     const result = await callClaudeWithVoice(message);
     
     if (result) {
@@ -921,7 +935,14 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
   
   // 今日の情報取得
   const openClaudeChat = async () => {
-    speak('少々お待ちください。今日の情報を調べますね。', false); 
+  // ✅ ブラウザ音声で即座に再生
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance('少々お待ちください。今日の情報を調べますね。');
+    utterance.lang = 'ja-JP';
+    utterance.rate = 1.05;
+    utterance.pitch = 1.4;
+    window.speechSynthesis.speak(utterance);
+  }
     
     const today = new Date();
     const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
@@ -930,8 +951,7 @@ ${status === '注意' ? '体調が良くないようですね。体調管理の�
     
     const greeting = getGreeting();
     const summary = getTodaysSummary();
-    const message = `${greeting}。今日は${dateStr}です。今日の状況: 体調:${summary.safetyCheck}、服薬:${summary.medications}。今日の佐世保市の天気は${weather ? weather.description : '情報なし'}、気温は${weather ? weather.temp + '度' : '情報なし'}です。今日の記念日、佐世保市の話題、面白いニュース、天気に触れて話してください。最後に「他に何かお聞きになりたいことはありますか?」という一文で終わってください。優しく話しかけてください。`;
-    
+    const message = `${greeting}。今日は${dateStr}です。体調:${summary.safetyCheck}、服薬:${summary.medications}。天気は${weather ? weather.description : '情報なし'}、${weather ? weather.temp + '度' : ''}です。150文字以内で今日の情報を話してください。`;
     const result = await callClaudeWithVoice(message);
     if (result) {
       setClaudeMessage(result.text);
