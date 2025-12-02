@@ -928,6 +928,7 @@ if ('speechSynthesis' in window) {
   
   // 今日の情報取得
   const openClaudeChat = async () => {
+
   // ✅ ブラウザ音声で即座に再生
   if ('speechSynthesis' in window) {
     const utterance = new SpeechSynthesisUtterance('少々お待ちください。今日の情報を調べますね。');
@@ -950,7 +951,27 @@ if ('speechSynthesis' in window) {
       await speak(result.text, result.audio, true);
     }
   };
-
+// ✅ 会話を停止
+const stopConversation = () => {
+  // 音声認識を停止
+  if (recognitionRef.current && isListening) {
+    recognitionRef.current.stop();
+    setIsListening(false);
+  }
+  
+  // 音声合成を停止
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  
+  // 連続対話フラグをオフ
+  setContinueConversation(false);
+  
+  // メッセージを閉じる
+  setShowMessage(false);
+  
+  console.log('会話を停止しました');
+};
   const summary = getTodaysSummary();
   
   // ✅ ログイン・登録画面
@@ -1171,19 +1192,18 @@ if ('speechSynthesis' in window) {
   }
   
   return (
-    <div className="app">
-      {showMessage && (
-        <div className="message-overlay" onClick={() => setShowMessage(false)}>
-          
-          <div className="message-box" onClick={(e) => e.stopPropagation()}>
-            <h3>Claudeからのメッセージ</h3>
-            <p className="message-text">{claudeMessage}</p>
-            <button className="close-button" onClick={() => setShowMessage(false)}>
-              閉じる
-            </button>
-          </div>
+  <div className="app">
+    {showMessage && (
+      <div className="message-overlay" onClick={stopConversation}>
+        <div className="message-box" onClick={(e) => e.stopPropagation()}>
+          <h3>Claudeからのメッセージ</h3>
+          <p className="message-text">{claudeMessage}</p>
+          <button className="close-button" onClick={stopConversation}>
+            閉じる
+          </button>
         </div>
-      )}
+      </div>
+    )}
           {/* ✅ 招待履歴モーダル */}
     {showInviteHistory && (
       <div className="message-overlay" onClick={() => setShowInviteHistory(false)}>
@@ -1503,39 +1523,56 @@ if ('speechSynthesis' in window) {
         )}
 
         <div className="claude-card">
-          <div className="claude-header">
-            <MessageCircle size={32} />
-            <h2>Claudeとお話し</h2>
-          </div>
-          <p className="claude-text">マイクボタンを押して話しかけてください</p>
-          <div className="claude-buttons">
-            <button 
-              onClick={() => startListening(false)} 
-              className={`claude-button mic-button ${isListening ? 'listening' : ''}`}
-              disabled={isLoading || isListening}
-            >
-              <Mic size={24} />
-              <span>{isListening ? '聞いています...' : '話しかける'}</span>
-            </button>
-            <button 
-              onClick={() => setShowTextInput(!showTextInput)} 
-              className="claude-button text-button" 
-              disabled={isLoading}
-            >
-              
-              <Keyboard size={24} />
-              <span>文字で質問</span>
-            </button>
-            <button 
-              onClick={openClaudeChat} 
-              className="claude-button info-button" 
-              disabled={isLoading}
-            >
-              
-              <MessageCircle size={24} />
-              <span>今日の情報</span>
-            </button>
-          </div>
+  <div className="claude-header">
+    <MessageCircle size={32} />
+    <h2>Claudeとお話し</h2>
+  </div>
+  <p className="claude-text">マイクボタンを押して話しかけてください</p>
+  <div className="claude-buttons" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+    <button 
+      onClick={() => startListening(false)} 
+      className={`claude-button mic-button ${isListening ? 'listening' : ''}`}
+      disabled={isLoading || isListening}
+      style={{ fontSize: '14px', padding: '12px 8px' }}
+    >
+      <Mic size={20} />
+      <span>{isListening ? '聞いています...' : '話しかける'}</span>
+    </button>
+    <button 
+      onClick={() => setShowTextInput(!showTextInput)} 
+      className="claude-button text-button" 
+      disabled={isLoading}
+      style={{ fontSize: '14px', padding: '12px 8px' }}
+    >
+      <Keyboard size={20} />
+      <span>文字で質問</span>
+    </button>
+    <button 
+      onClick={openClaudeChat} 
+      className="claude-button info-button" 
+      disabled={isLoading}
+      style={{ fontSize: '14px', padding: '12px 8px' }}
+    >
+      <MessageCircle size={20} />
+      <span>今日の情報</span>
+    </button>
+    <button 
+      onClick={stopConversation} 
+      className="claude-button" 
+      disabled={!isListening && !showMessage}
+      style={{ 
+        fontSize: '14px', 
+        padding: '12px 8px',
+        background: '#ef4444',
+        opacity: (!isListening && !showMessage) ? 0.5 : 1
+      }}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="6" y="6" width="12" height="12" />
+      </svg>
+      <span>停止</span>
+    </button>
+  </div>
           
           {showTextInput && (
             <div className="text-input-area">
