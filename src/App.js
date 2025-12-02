@@ -463,7 +463,7 @@ const fetchMedicationHistory = async (userId) => {
   // 天気情報取得
   const getWeather = useCallback(async () => {
     try {
-      const response = await fetch('/.netlify/functions/weather'); 
+     const response = await fetch('/api/weather');
       if (!response.ok) {
         throw new Error('天気情報の取得に失敗しました');
       }
@@ -486,7 +486,7 @@ const fetchMedicationHistory = async (userId) => {
       
       if (userPlan === 'free') {
         // 無料プラン: 既存のchat関数（テキストのみ）
-        const response = await fetch('/.netlify/functions/chat', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message })
@@ -499,7 +499,7 @@ const fetchMedicationHistory = async (userId) => {
         
       } else {
         // 有料Basicプラン: paid-tts関数（テキスト + OpenAI音声）
-        const response = await fetch('/.netlify/functions/paid-tts', {
+        const response = await fetch('/api/paid-tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
