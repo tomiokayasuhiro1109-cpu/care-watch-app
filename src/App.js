@@ -621,11 +621,10 @@ const fetchMedicationHistory = async (userId) => {
   const handleVoiceInput = useCallback(async (transcript) => {
     speak('少々お待ちください', false); // 処理中は連続対話しない
     const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
-    
+   
     const weather = await getWeather();
     
-    const message = `今日は${dateStr}です。ユーザーからの質問:「${transcript}」
+    const message = `ユーザーからの質問:「${transcript}」
 
 今日の佐世保市の天気情報:
 - 天気:${weather ? weather.description : '情報なし'}
@@ -787,12 +786,9 @@ const fetchMedicationHistory = async (userId) => {
     
     speak('少々お待ちください', false);
     
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
     
     const weather = await getWeather();
-    const message = `今日は${dateStr}です。ユーザーからの質問:「${userQuestion}」
-
+    const message = `ユーザーからの質問:「${userQuestion}」
 今日の佐世保市の天気情報:
 - 天気:${weather ? weather.description : '情報なし'}
 - 気温:${weather ? weather.temp + '度' : '情報なし'}
