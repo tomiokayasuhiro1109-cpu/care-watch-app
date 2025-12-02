@@ -943,7 +943,7 @@ if ('speechSynthesis' in window) {
     
     const greeting = getGreeting();
     const summary = getTodaysSummary();
-    const message = `${greeting}。今日は${dateStr}です。体調:${summary.safetyCheck}、服薬:${summary.medications}。天気は${weather ? weather.description : '情報なし'}、${weather ? weather.temp + '度' : ''}です。150文字以内で今日の情報を話してください。`;
+    const message = `${greeting}。体調:${summary.safetyCheck}、服薬:${summary.medications}。天気は${weather ? weather.description : '情報なし'}、${weather ? weather.temp + '度' : ''}です。150文字以内で今日の情報を話してください。`;
     const result = await callClaudeWithVoice(message);
     if (result) {
       setClaudeMessage(result.text);
