@@ -620,7 +620,7 @@ const fetchMedicationHistory = async (userId) => {
   // 音声入力処理
   const handleVoiceInput = useCallback(async (transcript) => {
     speak('少々お待ちください', false); // 処理中は連続対話しない
-    const today = new Date();
+    
    
     const weather = await getWeather();
     
@@ -902,9 +902,7 @@ ${status === '注意' ? '体調が良くないようですね。無理しない�
     setMedications(medications.map(m => 
       m.id === id ? { ...m, taken: true } : m
     ));
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
-    
+   
     const initialVoiceMessages = [`${med.name}を記録しました。えらいですね。少々お待ちください。`];
 const randomMessage = initialVoiceMessages[Math.floor(Math.random() * initialVoiceMessages.length)];
 
@@ -940,8 +938,6 @@ if ('speechSynthesis' in window) {
     window.speechSynthesis.speak(utterance);
   }
     
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
     
     const weather = await getWeather();
     
