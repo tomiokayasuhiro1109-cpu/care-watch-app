@@ -952,17 +952,25 @@ if ('speechSynthesis' in window) {
     }
   };
 // ✅ 会話を停止
+// ✅ 会話を停止
 const stopConversation = () => {
   // 音声認識を停止
-  if (recognitionRef.current && isListening) {
-    recognitionRef.current.stop();
-    setIsListening(false);
+  if (recognitionRef.current) {
+    try {
+      recognitionRef.current.abort(); // stop()ではなくabort()を使用
+    } catch (e) {
+      console.log('音声認識停止エラー:', e);
+    }
   }
+  setIsListening(false);
   
   // 音声合成を停止
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }
+  
+  // ローディング停止
+  setIsLoading(false);
   
   // 連続対話フラグをオフ
   setContinueConversation(false);
@@ -1556,22 +1564,23 @@ const stopConversation = () => {
       <MessageCircle size={20} />
       <span>今日の情報</span>
     </button>
-    <button 
-      onClick={stopConversation} 
-      className="claude-button" 
-      disabled={!isListening && !showMessage}
-      style={{ 
-        fontSize: '14px', 
-        padding: '12px 8px',
-        background: '#ef4444',
-        opacity: (!isListening && !showMessage) ? 0.5 : 1
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="6" y="6" width="12" height="12" />
-      </svg>
-      <span>停止</span>
-    </button>
+   <button 
+  onClick={stopConversation} 
+  className="claude-button" 
+  disabled={!isListening && !showMessage && !isLoading}
+  style={{ 
+    fontSize: '14px', 
+    padding: '12px 8px',
+    background: (isListening || showMessage || isLoading) ? '#ef4444' : '#94a3b8',
+    opacity: (!isListening && !showMessage && !isLoading) ? 0.5 : 1,
+    cursor: (!isListening && !showMessage && !isLoading) ? 'not-allowed' : 'pointer'
+  }}
+>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="6" y="6" width="12" height="12" />
+  </svg>
+  <span>停止</span>
+</button>
   </div>
           
           {showTextInput && (
