@@ -838,7 +838,6 @@ const fetchMedicationHistory = async (userId) => {
     setSafetyChecks([check, ...safetyChecks]);
     
     const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
     
     let initialVoiceMessages = [];
     if (status === '良好') {
